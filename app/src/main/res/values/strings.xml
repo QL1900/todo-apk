@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">待办归集</string>
+    <string name="widget_today_desc">显示今日待办事项</string>
+    <string name="widget_week_desc">显示本周待办事项</string>
+    <string-array name="systems">
+        <item>飞书</item>
+        <item>钉钉</item>
+        <item>Jira</item>
+        <item>GitHub Issues</item>
+        <item>企业微信</item>
+    </string-array>
+    <string-array name="priorities">
+        <item>普通</item>
+        <item>紧急</item>
+    </string-array>
+</resources>
