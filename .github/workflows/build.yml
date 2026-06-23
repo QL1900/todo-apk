@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       contents: read
       actions: write
@@ -23,21 +23,22 @@ jobs:
 
       - name: Setup Android SDK manually
         run: |
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          cd $HOME/android-sdk/cmdline-tools
-          curl -L -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip -q tools.zip
-          mv cmdline-tools latest
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "platform-tools" "build-tools;34.0.0" "platforms;android-34" 2>/dev/null || true
+          mkdir -Force $env:USERPROFILE\android-sdk\cmdline-tools
+          cd $env:USERPROFILE\android-sdk\cmdline-tools
+          curl -L -o tools.zip https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip
+          tar -xf tools.zip
+          ren cmdline-tools latest
+          $env:ANDROID_HOME = "$env:USERPROFILE\android-sdk"
+          $env:ANDROID_SDK_ROOT = "$env:USERPROFILE\android-sdk"
+          cmd /c "echo y | $env:ANDROID_HOME\cmdline-tools\latest\bin\sdkmanager.bat --sdk_root=$env:ANDROID_HOME platform-tools `"build-tools;34.0.0`" `"platforms;android-34`""
 
       - name: Build debug APK
-        env:
-          ANDROID_HOME: /home/runner/android-sdk
-          ANDROID_SDK_ROOT: /home/runner/android-sdk
+        shell: cmd
         run: |
-          chmod +x ./gradlew
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          ./gradlew assembleDebug --no-daemon
+          set ANDROID_HOME=%USERPROFILE%\android-sdk
+          set ANDROID_SDK_ROOT=%USERPROFILE%\android-sdk
+          echo sdk.dir=%ANDROID_HOME%> local.properties
+          gradlew.bat assembleDebug --no-daemon --warning-mode=all 2>&1
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
